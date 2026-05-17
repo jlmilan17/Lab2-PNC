@@ -1,14 +1,17 @@
 package com.lab2.pnc.Service.ServiceImp;
 
+import com.lab2.pnc.HandlerException.DepartmentNotFoundException;
 import com.lab2.pnc.HandlerException.DuplicateDuiException;
 import com.lab2.pnc.HandlerException.PersonNotFoundException;
 import com.lab2.pnc.Model.Address;
+import com.lab2.pnc.Model.Department;
 import com.lab2.pnc.Model.DTOs.AddressDTO;
 import com.lab2.pnc.Model.DTOs.MostWantedDTO;
 import com.lab2.pnc.Model.DTOs.PersonChargesDTO;
 import com.lab2.pnc.Model.DTOs.PersonDTO;
 import com.lab2.pnc.Model.Person;
 import com.lab2.pnc.Repository.iChargesRepository;
+import com.lab2.pnc.Repository.iDepartmentRepository;
 import com.lab2.pnc.Repository.iPersonRepository;
 import com.lab2.pnc.Service.iChargesService;
 import com.lab2.pnc.Service.iPersonService;
@@ -24,6 +27,7 @@ public class PersonServiceImp implements iPersonService {
     private final iPersonRepository personRepository;
     private final iChargesRepository chargesRepository;
     private final iChargesService chargesService;
+    private final iDepartmentRepository departmentRepository;
 
     @Override
     public PersonDTO registerPerson(PersonDTO personDTO) {
@@ -72,9 +76,46 @@ public class PersonServiceImp implements iPersonService {
                 .toList();
     }
 
+    @Override
+    public List<PersonDTO> findAll() {
+        return personRepository.findAll().stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    @Override
+    public PersonDTO findByDui(String dui) {
+        Person person = personRepository.findPersonByDui(dui);
+        if (person == null) throw new PersonNotFoundException(dui);
+        return toDTO(person);
+    }
+
+    @Override
+    public PersonDTO updatePerson(String dui, PersonDTO personDTO) {
+        Person person = personRepository.findPersonByDui(dui);
+        if (person == null) throw new PersonNotFoundException(dui);
+
+        person.setName(personDTO.getName());
+        person.setPhoneNumber(personDTO.getPhoneNumber());
+        person.setAddress(toAddressEntity(personDTO.getAddressDTO()));
+
+        return toDTO(personRepository.save(person));
+    }
+
+    @Override
+    public void deletePerson(String dui) {
+        Person person = personRepository.findPersonByDui(dui);
+        if (person == null) throw new PersonNotFoundException(dui);
+        chargesRepository.deleteAll(chargesRepository.findByAccused_Dui(dui));
+        chargesRepository.deleteAll(chargesRepository.findByAccuser_Dui(dui));
+        personRepository.delete(person);
+    }
+
     private Address toAddressEntity(AddressDTO dto) {
+        Department department = departmentRepository.findByName(dto.getDepartment());
+        if (department == null) throw new DepartmentNotFoundException(dto.getDepartment());
         return Address.builder()
-                .department(dto.getDepartment())
+                .department(department)
                 .street(dto.getStreet())
                 .municipality(dto.getMunicipality())
                 .neighborhood(dto.getNeighborhood())
@@ -83,7 +124,8 @@ public class PersonServiceImp implements iPersonService {
 
     private AddressDTO toAddressDTO(Address address) {
         return AddressDTO.builder()
-                .department(address.getDepartment())
+                .department(address.getDepartment().getName())
+                .zone(address.getDepartment().getZone().name())
                 .street(address.getStreet())
                 .municipality(address.getMunicipality())
                 .neighborhood(address.getNeighborhood())

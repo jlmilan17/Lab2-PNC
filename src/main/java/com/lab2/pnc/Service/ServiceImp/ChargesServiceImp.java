@@ -142,7 +142,8 @@ public class ChargesServiceImp implements iChargesService {
 
     private AddressDTO toAddressDTO(Address address) {
         return AddressDTO.builder()
-                .department(address.getDepartment())
+                .department(address.getDepartment().getName())
+                .zone(address.getDepartment().getZone().name())
                 .street(address.getStreet())
                 .municipality(address.getMunicipality())
                 .neighborhood(address.getNeighborhood())

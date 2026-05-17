@@ -10,48 +10,66 @@ DELETE FROM police_officer;
 DELETE FROM police_station;
 DELETE FROM person;
 DELETE FROM address;
+DELETE FROM department;
+
+-- ---- Departamentos por zona (los 14 de El Salvador) ----
+INSERT INTO department (department_uuid, name, zone) VALUES
+(gen_random_uuid(), 'Santa Ana',           'OCCIDENTAL'),
+(gen_random_uuid(), 'Ahuachapán',          'OCCIDENTAL'),
+(gen_random_uuid(), 'Sonsonate',           'OCCIDENTAL'),
+(gen_random_uuid(), 'San Salvador',        'CENTRAL'),
+(gen_random_uuid(), 'La Libertad',         'CENTRAL'),
+(gen_random_uuid(), 'Chalatenango',        'CENTRAL'),
+(gen_random_uuid(), 'Cuscatlán',           'CENTRAL'),
+(gen_random_uuid(), 'La Paz',              'PARACENTRAL'),
+(gen_random_uuid(), 'San Vicente',         'PARACENTRAL'),
+(gen_random_uuid(), 'Cabañas',             'PARACENTRAL'),
+(gen_random_uuid(), 'Usulután',            'ORIENTAL'),
+(gen_random_uuid(), 'San Miguel',          'ORIENTAL'),
+(gen_random_uuid(), 'Morazán',             'ORIENTAL'),
+(gen_random_uuid(), 'La Unión',            'ORIENTAL');
 
 -- ---- Direcciones ----
-INSERT INTO address (address_uuid, department, street, municipality, neighborhood) VALUES
-(gen_random_uuid(), 'San Salvador',  '1a Calle Poniente',        'San Salvador',         'Centro Histórico'),
-(gen_random_uuid(), 'Santa Ana',     'Avenida Independencia',    'Santa Ana',            'Barrio El Calvario'),
-(gen_random_uuid(), 'La Libertad',   'Boulevard Constitución',   'Santa Tecla',          'Colonia Miramonte'),
-(gen_random_uuid(), 'Sonsonate',     'Calle El Comercio',        'Sonsonate',            'Barrio El Centro'),
-(gen_random_uuid(), 'Ahuachapán',    '1a Avenida Norte',         'Ahuachapán',           'Barrio El Calvario'),
-(gen_random_uuid(), 'Chalatenango',  'Calle Morazán',            'Chalatenango',         'Barrio El Centro'),
-(gen_random_uuid(), 'Cuscatlán',     'Calle Principal',          'Cojutepeque',          'Barrio San José'),
-(gen_random_uuid(), 'La Paz',        'Avenida Masferrer',        'Zacatecoluca',         'Colonia San Antonio'),
-(gen_random_uuid(), 'Cabañas',       'Calle Central',            'Sensuntepeque',        'Barrio La Esperanza'),
-(gen_random_uuid(), 'San Vicente',   'Avenida Cuscatlán',        'San Vicente',          'Barrio El Santuario'),
-(gen_random_uuid(), 'Usulután',      'Calle Grimaldi',           'Usulután',             'Barrio La Parroquia'),
-(gen_random_uuid(), 'San Miguel',    '4a Calle Oriente',         'San Miguel',           'Barrio San Felipe'),
-(gen_random_uuid(), 'Morazán',       'Calle La Paz',             'San Francisco Gotera', 'Barrio El Centro'),
-(gen_random_uuid(), 'La Unión',      'Avenida General Cabañas',  'La Unión',             'Barrio Concepción');
+INSERT INTO address (address_uuid, department_id, street, municipality, neighborhood) VALUES
+(gen_random_uuid(), (SELECT department_uuid FROM department WHERE name = 'San Salvador' LIMIT 1), '1a Calle Poniente',       'San Salvador',         'Centro Histórico'),
+(gen_random_uuid(), (SELECT department_uuid FROM department WHERE name = 'Santa Ana'    LIMIT 1), 'Avenida Independencia',   'Santa Ana',            'Barrio El Calvario'),
+(gen_random_uuid(), (SELECT department_uuid FROM department WHERE name = 'La Libertad'  LIMIT 1), 'Boulevard Constitución',  'Santa Tecla',          'Colonia Miramonte'),
+(gen_random_uuid(), (SELECT department_uuid FROM department WHERE name = 'Sonsonate'    LIMIT 1), 'Calle El Comercio',       'Sonsonate',            'Barrio El Centro'),
+(gen_random_uuid(), (SELECT department_uuid FROM department WHERE name = 'Ahuachapán'   LIMIT 1), '1a Avenida Norte',        'Ahuachapán',           'Barrio El Calvario'),
+(gen_random_uuid(), (SELECT department_uuid FROM department WHERE name = 'Chalatenango' LIMIT 1), 'Calle Morazán',           'Chalatenango',         'Barrio El Centro'),
+(gen_random_uuid(), (SELECT department_uuid FROM department WHERE name = 'Cuscatlán'    LIMIT 1), 'Calle Principal',         'Cojutepeque',          'Barrio San José'),
+(gen_random_uuid(), (SELECT department_uuid FROM department WHERE name = 'La Paz'       LIMIT 1), 'Avenida Masferrer',       'Zacatecoluca',         'Colonia San Antonio'),
+(gen_random_uuid(), (SELECT department_uuid FROM department WHERE name = 'Cabañas'      LIMIT 1), 'Calle Central',           'Sensuntepeque',        'Barrio La Esperanza'),
+(gen_random_uuid(), (SELECT department_uuid FROM department WHERE name = 'San Vicente'  LIMIT 1), 'Avenida Cuscatlán',       'San Vicente',          'Barrio El Santuario'),
+(gen_random_uuid(), (SELECT department_uuid FROM department WHERE name = 'Usulután'     LIMIT 1), 'Calle Grimaldi',          'Usulután',             'Barrio La Parroquia'),
+(gen_random_uuid(), (SELECT department_uuid FROM department WHERE name = 'San Miguel'   LIMIT 1), '4a Calle Oriente',        'San Miguel',           'Barrio San Felipe'),
+(gen_random_uuid(), (SELECT department_uuid FROM department WHERE name = 'Morazán'      LIMIT 1), 'Calle La Paz',            'San Francisco Gotera', 'Barrio El Centro'),
+(gen_random_uuid(), (SELECT department_uuid FROM department WHERE name = 'La Unión'     LIMIT 1), 'Avenida General Cabañas', 'La Unión',             'Barrio Concepción');
 
 -- ---- Personas ----
 INSERT INTO person (person_uuid, dui, name, phone_number, address_id)
 SELECT gen_random_uuid(), dui, name, phone_number, address_id FROM (
     VALUES
-    ('11223344-5', 'María López',    '9999-9991', (SELECT address_uuid FROM address WHERE department = 'La Libertad' LIMIT 1)),
-    ('11223344-6', 'Roberto Cruz',   '9999-9992', (SELECT address_uuid FROM address WHERE department = 'Sonsonate' LIMIT 1)),
-    ('11223344-7', 'Ana Hernández',  '9999-9993', (SELECT address_uuid FROM address WHERE department = 'Ahuachapán' LIMIT 1)),
-    ('11223344-8', 'Luis Mendoza',   '9999-9994', (SELECT address_uuid FROM address WHERE department = 'Chalatenango' LIMIT 1)),
-    ('12345678-9', 'Juan Pérez',     '7777-7777', (SELECT address_uuid FROM address WHERE department = 'Cuscatlán' LIMIT 1)),
-    ('98765432-1', 'Carlos Ramírez', '8888-8888', (SELECT address_uuid FROM address WHERE department = 'La Paz' LIMIT 1)),
-    ('55667788-2', 'Pedro Martínez', '6666-6666', (SELECT address_uuid FROM address WHERE department = 'Cabañas' LIMIT 1)),
-    ('11335577-3', 'Luis González',  '5555-5555', (SELECT address_uuid FROM address WHERE department = 'San Vicente' LIMIT 1)),
-    ('22446688-4', 'Ana Martínez',   '4444-4444', (SELECT address_uuid FROM address WHERE department = 'Usulután' LIMIT 1)),
-    ('33557799-5', 'José Fernández', '3333-3333', (SELECT address_uuid FROM address WHERE department = 'San Miguel' LIMIT 1)),
-    ('44668800-6', 'Marta Vargas',   '2222-2222', (SELECT address_uuid FROM address WHERE department = 'Morazán' LIMIT 1)),
-    ('55779911-7', 'Sandra Rivera',  '1111-1111', (SELECT address_uuid FROM address WHERE department = 'La Unión' LIMIT 1))
+    ('11223344-5', 'María López',    '9999-9991', (SELECT address_uuid FROM address a JOIN department d ON a.department_id = d.department_uuid WHERE d.name = 'La Libertad' LIMIT 1)),
+    ('11223344-6', 'Roberto Cruz',   '9999-9992', (SELECT address_uuid FROM address a JOIN department d ON a.department_id = d.department_uuid WHERE d.name = 'Sonsonate' LIMIT 1)),
+    ('11223344-7', 'Ana Hernández',  '9999-9993', (SELECT address_uuid FROM address a JOIN department d ON a.department_id = d.department_uuid WHERE d.name = 'Ahuachapán' LIMIT 1)),
+    ('11223344-8', 'Luis Mendoza',   '9999-9994', (SELECT address_uuid FROM address a JOIN department d ON a.department_id = d.department_uuid WHERE d.name = 'Chalatenango' LIMIT 1)),
+    ('12345678-9', 'Juan Pérez',     '7777-7777', (SELECT address_uuid FROM address a JOIN department d ON a.department_id = d.department_uuid WHERE d.name = 'Cuscatlán' LIMIT 1)),
+    ('98765432-1', 'Carlos Ramírez', '8888-8888', (SELECT address_uuid FROM address a JOIN department d ON a.department_id = d.department_uuid WHERE d.name = 'La Paz' LIMIT 1)),
+    ('55667788-2', 'Pedro Martínez', '6666-6666', (SELECT address_uuid FROM address a JOIN department d ON a.department_id = d.department_uuid WHERE d.name = 'Cabañas' LIMIT 1)),
+    ('11335577-3', 'Luis González',  '5555-5555', (SELECT address_uuid FROM address a JOIN department d ON a.department_id = d.department_uuid WHERE d.name = 'San Vicente' LIMIT 1)),
+    ('22446688-4', 'Ana Martínez',   '4444-4444', (SELECT address_uuid FROM address a JOIN department d ON a.department_id = d.department_uuid WHERE d.name = 'Usulután' LIMIT 1)),
+    ('33557799-5', 'José Fernández', '3333-3333', (SELECT address_uuid FROM address a JOIN department d ON a.department_id = d.department_uuid WHERE d.name = 'San Miguel' LIMIT 1)),
+    ('44668800-6', 'Marta Vargas',   '2222-2222', (SELECT address_uuid FROM address a JOIN department d ON a.department_id = d.department_uuid WHERE d.name = 'Morazán' LIMIT 1)),
+    ('55779911-7', 'Sandra Rivera',  '1111-1111', (SELECT address_uuid FROM address a JOIN department d ON a.department_id = d.department_uuid WHERE d.name = 'La Unión' LIMIT 1))
 ) AS t(dui, name, phone_number, address_id);
 
 -- ---- Estaciones ----
 INSERT INTO police_station (police_station_uuid, name, address_id)
 SELECT gen_random_uuid(), name, address_id FROM (
     VALUES
-    ('Delegación Centro',    (SELECT address_uuid FROM address WHERE department = 'San Salvador' LIMIT 1)),
-    ('Delegación Occidente', (SELECT address_uuid FROM address WHERE department = 'Santa Ana' LIMIT 1))
+    ('Delegación Centro',    (SELECT address_uuid FROM address a JOIN department d ON a.department_id = d.department_uuid WHERE d.name = 'San Salvador' LIMIT 1)),
+    ('Delegación Occidente', (SELECT address_uuid FROM address a JOIN department d ON a.department_id = d.department_uuid WHERE d.name = 'Santa Ana' LIMIT 1))
 ) AS t(name, address_id);
 
 -- ---- Oficiales ----
@@ -72,10 +90,14 @@ SELECT gen_random_uuid(), code_number, badge, person_id, police_station_id FROM 
         (SELECT police_station_uuid FROM police_station WHERE name = 'Delegación Occidente' LIMIT 1))
 ) AS t(code_number, badge, person_id, police_station_id);
 
--- ---- Asignar director a Delegación Centro ----
+-- ---- Directores de estaciones ----
 UPDATE police_station
 SET director_id = (SELECT police_officer_uuid FROM police_officer WHERE code_number = 'PNC-0001' LIMIT 1)
 WHERE name = 'Delegación Centro';
+
+UPDATE police_station
+SET director_id = (SELECT police_officer_uuid FROM police_officer WHERE code_number = 'PNC-0003' LIMIT 1)
+WHERE name = 'Delegación Occidente';
 
 -- ---- Cargos ----
 INSERT INTO charges (charges_uuid, date, charge_type, description, accuser_id, accused_id, registered_by_officer_id, police_station_id)
