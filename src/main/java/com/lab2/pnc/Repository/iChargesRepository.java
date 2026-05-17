@@ -22,4 +22,6 @@ public interface iChargesRepository extends JpaRepository<Charges, UUID> {
     List<Object[]> findMostWanted(Pageable pageable);
 
     List<Charges> findByAccused_Dui(String dui);
+
+    List<Charges> findByAccuser_Dui(String dui);
 }

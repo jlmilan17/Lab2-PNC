@@ -14,4 +14,12 @@ public interface iPersonService {
     List<MostWantedDTO> findMostWanted();
 
     PersonChargesDTO findChargesOf(String dui);
+
+    List<PersonDTO> findAll();
+
+    PersonDTO findByDui(String dui);
+
+    PersonDTO updatePerson(String dui, PersonDTO personDTO);
+
+    void deletePerson(String dui);
 }

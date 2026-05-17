@@ -72,6 +72,41 @@ public class PersonServiceImp implements iPersonService {
                 .toList();
     }
 
+    @Override
+    public List<PersonDTO> findAll() {
+        return personRepository.findAll().stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    @Override
+    public PersonDTO findByDui(String dui) {
+        Person person = personRepository.findPersonByDui(dui);
+        if (person == null) throw new PersonNotFoundException(dui);
+        return toDTO(person);
+    }
+
+    @Override
+    public PersonDTO updatePerson(String dui, PersonDTO personDTO) {
+        Person person = personRepository.findPersonByDui(dui);
+        if (person == null) throw new PersonNotFoundException(dui);
+
+        person.setName(personDTO.getName());
+        person.setPhoneNumber(personDTO.getPhoneNumber());
+        person.setAddress(toAddressEntity(personDTO.getAddressDTO()));
+
+        return toDTO(personRepository.save(person));
+    }
+
+    @Override
+    public void deletePerson(String dui) {
+        Person person = personRepository.findPersonByDui(dui);
+        if (person == null) throw new PersonNotFoundException(dui);
+        chargesRepository.deleteAll(chargesRepository.findByAccused_Dui(dui));
+        chargesRepository.deleteAll(chargesRepository.findByAccuser_Dui(dui));
+        personRepository.delete(person);
+    }
+
     private Address toAddressEntity(AddressDTO dto) {
         return Address.builder()
                 .department(dto.getDepartment())
