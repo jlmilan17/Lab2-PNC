@@ -16,6 +16,8 @@ public class AddressDTO {
     @Size(max = 50, message = "El departamento no puede tener más de 50 caracteres")
     private String department;
 
+    private String zone;
+
     @NotBlank(message = "La calle es obligatoria")
     @Size(max = 100, message = "La calle no puede tener más de 100 caracteres")
     private String street;
