@@ -3,7 +3,7 @@
 ## Endpoints Existentes 
 
 ### Jose Luis
-### PersonController (`/api/users`)
+#### PersonController (`/api/users`)
 
 | Método | Endpoint | Función |
 |--------|----------|---------|
@@ -12,12 +12,20 @@
 | GET | `/most-wanted` | Listar más buscados |
 | GET | `/{dui}/charges` | Ver cargos de una persona |
 
-### ChargesController (`/api/charges`)
+#### ChargesController (`/api/charges`)
 
 | Método | Endpoint | Función |
 |--------|----------|---------|
 | POST | `/register` | Registrar denuncia/cargo | 
 | GET | `/` | Listar todas las denuncias |
+
+### Iván
+
+#### PoliceStationController (`/api/police-stations`)
+
+| Método | Endpoint | Función |
+|--------|----------|---------|
+| GET | `/` | Listar estaciones |
 
 ---
 
@@ -46,12 +54,6 @@
 | PUT | `/{id}` | Actualizar denuncia |
 | DELETE | `/{id}` | Eliminar denuncia |
 | PUT | `/{id}/status` | Actualizar estado |
-
-#### PoliceStationController (`/api/police-stations`)
-
-| Método | Endpoint | Función |
-|--------|----------|---------|
-| GET | `/` | Listar estaciones |
 
 ---
 
