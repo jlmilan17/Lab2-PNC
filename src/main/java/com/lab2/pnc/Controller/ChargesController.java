@@ -32,7 +32,6 @@ public class ChargesController {
     @GetMapping("/{id}")
     ResponseEntity<Charges> getCharge(@PathVariable String id) {
         UUID chargeId = UUID.fromString(id);
-        Charges charge = chargesService.findById(chargeId)
-        return ResponseEntity.ok(charge);
+        return ResponseEntity.ok(chargesService.findById(chargeId));
     }
 }
