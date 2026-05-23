@@ -1,5 +1,6 @@
 package com.lab2.pnc.Controller;
 
+import com.lab2.pnc.Model.Charges;
 import com.lab2.pnc.Model.DTOs.ChargeRequestDTO;
 import com.lab2.pnc.Model.DTOs.ChargeSummaryDTO;
 import com.lab2.pnc.Model.DTOs.ChargesDTO;
@@ -7,13 +8,10 @@ import com.lab2.pnc.Service.iChargesService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/charges")
@@ -29,5 +27,12 @@ public class ChargesController {
     @GetMapping
     ResponseEntity<List<ChargeSummaryDTO>> getAllChargesSummary() {
         return ResponseEntity.ok(chargesService.getAllChargesSummary());
+    }
+
+    @GetMapping("/{id}")
+    ResponseEntity<Charges> getCharge(@PathVariable String id) {
+        UUID chargeId = UUID.fromString(id);
+        Charges charge = chargesService.findById(chargeId)
+        return ResponseEntity.ok(charge);
     }
 }
