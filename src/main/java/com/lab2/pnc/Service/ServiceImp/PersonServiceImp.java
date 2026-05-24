@@ -18,6 +18,7 @@ import com.lab2.pnc.Service.iPersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class PersonServiceImp implements iPersonService {
     private final iDepartmentRepository departmentRepository;
 
     @Override
+    @Transactional
     public PersonDTO registerPerson(PersonDTO personDTO) {
         if (personRepository.findPersonByDui(personDTO.getDui()) != null) {
             throw new DuplicateDuiException(personDTO.getDui());
@@ -47,6 +49,7 @@ public class PersonServiceImp implements iPersonService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PersonDTO> findAllWithCharges() {
         return personRepository.findAllWithCharges().stream()
                 .map(this::toDTO)
@@ -54,6 +57,7 @@ public class PersonServiceImp implements iPersonService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PersonChargesDTO findChargesOf(String dui) {
         Person person = personRepository.findPersonByDui(dui);
         if (person == null) throw new PersonNotFoundException(dui);
@@ -65,6 +69,7 @@ public class PersonServiceImp implements iPersonService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MostWantedDTO> findMostWanted() {
         return chargesRepository.findMostWanted(PageRequest.of(0, 3)).stream()
                 .map(row -> {
@@ -77,6 +82,7 @@ public class PersonServiceImp implements iPersonService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PersonDTO> findAll() {
         return personRepository.findAll().stream()
                 .map(this::toDTO)
@@ -84,6 +90,7 @@ public class PersonServiceImp implements iPersonService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PersonDTO findByDui(String dui) {
         Person person = personRepository.findPersonByDui(dui);
         if (person == null) throw new PersonNotFoundException(dui);
@@ -91,6 +98,7 @@ public class PersonServiceImp implements iPersonService {
     }
 
     @Override
+    @Transactional
     public PersonDTO updatePerson(String dui, PersonDTO personDTO) {
         Person person = personRepository.findPersonByDui(dui);
         if (person == null) throw new PersonNotFoundException(dui);
@@ -103,6 +111,7 @@ public class PersonServiceImp implements iPersonService {
     }
 
     @Override
+    @Transactional
     public void deletePerson(String dui) {
         Person person = personRepository.findPersonByDui(dui);
         if (person == null) throw new PersonNotFoundException(dui);

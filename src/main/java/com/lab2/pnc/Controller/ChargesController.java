@@ -1,8 +1,9 @@
 package com.lab2.pnc.Controller;
 
-import com.lab2.pnc.Model.Charges;
 import com.lab2.pnc.Model.DTOs.ChargeRequestDTO;
 import com.lab2.pnc.Model.DTOs.ChargeSummaryDTO;
+import com.lab2.pnc.Model.DTOs.ChargeStatusDTO;
+import com.lab2.pnc.Model.DTOs.ChargeUpdateDTO;
 import com.lab2.pnc.Model.DTOs.ChargesDTO;
 import com.lab2.pnc.Service.iChargesService;
 import jakarta.validation.Valid;
@@ -30,8 +31,23 @@ public class ChargesController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<Charges> getCharge(@PathVariable String id) {
-        UUID chargeId = UUID.fromString(id);
-        return ResponseEntity.ok(chargesService.findById(chargeId));
+    ResponseEntity<ChargesDTO> getCharge(@PathVariable String id) {
+        return ResponseEntity.ok(chargesService.findById(UUID.fromString(id)));
+    }
+
+    @PutMapping("/{id}")
+    ResponseEntity<ChargesDTO> updateCharge(@PathVariable String id, @Valid @RequestBody ChargeUpdateDTO dto) {
+        return ResponseEntity.ok(chargesService.updateCharge(UUID.fromString(id), dto));
+    }
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<Void> deleteCharge(@PathVariable String id) {
+        chargesService.deleteCharge(UUID.fromString(id));
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/status")
+    ResponseEntity<ChargesDTO> updateChargeStatus(@PathVariable String id, @Valid @RequestBody ChargeStatusDTO dto) {
+        return ResponseEntity.ok(chargesService.updateChargeStatus(UUID.fromString(id), dto));
     }
 }
