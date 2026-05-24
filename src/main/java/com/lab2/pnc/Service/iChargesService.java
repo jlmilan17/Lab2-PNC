@@ -1,8 +1,9 @@
 package com.lab2.pnc.Service;
 
-import com.lab2.pnc.Model.Charges;
 import com.lab2.pnc.Model.DTOs.ChargeRequestDTO;
 import com.lab2.pnc.Model.DTOs.ChargeSummaryDTO;
+import com.lab2.pnc.Model.DTOs.ChargeStatusDTO;
+import com.lab2.pnc.Model.DTOs.ChargeUpdateDTO;
 import com.lab2.pnc.Model.DTOs.ChargesDTO;
 
 import java.util.List;
@@ -15,5 +16,11 @@ public interface iChargesService {
 
     List<ChargeSummaryDTO> getAllChargesSummary();
 
-    Charges findById(UUID id);
+    ChargesDTO findById(UUID id);
+
+    ChargesDTO updateCharge(UUID id, ChargeUpdateDTO dto);
+
+    void deleteCharge(UUID id);
+
+    ChargesDTO updateChargeStatus(UUID id, ChargeStatusDTO dto);
 }

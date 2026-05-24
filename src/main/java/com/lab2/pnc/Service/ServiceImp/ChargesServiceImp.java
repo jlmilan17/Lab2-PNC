@@ -1,5 +1,6 @@
 package com.lab2.pnc.Service.ServiceImp;
 
+import com.lab2.pnc.HandlerException.ChargeNotFoundException;
 import com.lab2.pnc.HandlerException.PersonNotFoundException;
 import com.lab2.pnc.HandlerException.PoliceOfficerNotFoundException;
 import com.lab2.pnc.HandlerException.PoliceStationNotFoundException;
@@ -9,11 +10,14 @@ import com.lab2.pnc.Model.Charges;
 import com.lab2.pnc.Model.DTOs.AddressDTO;
 import com.lab2.pnc.Model.DTOs.ChargeRequestDTO;
 import com.lab2.pnc.Model.DTOs.ChargeSummaryDTO;
+import com.lab2.pnc.Model.DTOs.ChargeStatusDTO;
+import com.lab2.pnc.Model.DTOs.ChargeUpdateDTO;
 import com.lab2.pnc.Model.DTOs.ChargesDTO;
 import com.lab2.pnc.Model.DTOs.PersonDTO;
 import com.lab2.pnc.Model.DTOs.PersonSummaryDTO;
 import com.lab2.pnc.Model.DTOs.PoliceOfficerDTO;
 import com.lab2.pnc.Model.DTOs.PoliceStationDTO;
+import com.lab2.pnc.Model.Enum.ChargeStatus;
 import com.lab2.pnc.Model.Person;
 import com.lab2.pnc.Model.PoliceOfficer;
 import com.lab2.pnc.Model.PoliceStation;
@@ -27,7 +31,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -60,6 +63,7 @@ public class ChargesServiceImp implements iChargesService {
         Charges charge = Charges.builder()
                 .date(request.getDate())
                 .chargeType(request.getChargeType())
+                .status(ChargeStatus.ACTIVA)
                 .accuser(accuser)
                 .accused(accused)
                 .registeredBy(officer)
@@ -72,6 +76,7 @@ public class ChargesServiceImp implements iChargesService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ChargesDTO> getChargesByAccusedDui(String dui) {
         return chargesRepository.findByAccused_Dui(dui).stream()
                 .map(this::toChargesDTO)
@@ -79,6 +84,7 @@ public class ChargesServiceImp implements iChargesService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ChargeSummaryDTO> getAllChargesSummary() {
         return chargesRepository.findAll().stream()
                 .map(this::toChargeSummary)
@@ -86,13 +92,43 @@ public class ChargesServiceImp implements iChargesService {
     }
 
     @Override
-    public Charges findById(UUID id) {
-        Optional<Charges> charge = chargesRepository.findById(id);
-        if (charge.isPresent()) {
-            return charge.get();
-        } else {
-            throw new RuntimeException("Product not found with id: " + id);
+    @Transactional(readOnly = true)
+    public ChargesDTO findById(UUID id) {
+        Charges charge = chargesRepository.findById(id)
+                .orElseThrow(() -> new ChargeNotFoundException(id));
+        return toChargesDTO(charge);
+    }
+
+    @Override
+    @Transactional
+    public ChargesDTO updateCharge(UUID id, ChargeUpdateDTO dto) {
+        Charges charge = chargesRepository.findById(id)
+                .orElseThrow(() -> new ChargeNotFoundException(id));
+
+        if (dto.getDate() != null) charge.setDate(dto.getDate());
+        if (dto.getChargeType() != null) charge.setChargeType(dto.getChargeType());
+        if (dto.getDescription() != null) charge.setDescription(dto.getDescription());
+
+        return toChargesDTO(chargesRepository.save(charge));
+    }
+
+    @Override
+    @Transactional
+    public void deleteCharge(UUID id) {
+        if (!chargesRepository.existsById(id)) {
+            throw new ChargeNotFoundException(id);
         }
+        chargesRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public ChargesDTO updateChargeStatus(UUID id, ChargeStatusDTO dto) {
+        Charges charge = chargesRepository.findById(id)
+                .orElseThrow(() -> new ChargeNotFoundException(id));
+
+        charge.setStatus(dto.getStatus());
+        return toChargesDTO(chargesRepository.save(charge));
     }
 
     private ChargeSummaryDTO toChargeSummary(Charges charge) {
@@ -101,7 +137,9 @@ public class ChargesServiceImp implements iChargesService {
         accuser.setDui(charge.getAccuser().getDui());
 
         ChargeSummaryDTO dto = new ChargeSummaryDTO();
+        dto.setId(charge.getChargesUuid());
         dto.setChargeType(charge.getChargeType());
+        dto.setStatus(charge.getStatus());
         dto.setAccuser(accuser);
         dto.setOfficerName(charge.getRegisteredBy().getPerson().getName());
         return dto;
@@ -111,6 +149,7 @@ public class ChargesServiceImp implements iChargesService {
         ChargesDTO dto = new ChargesDTO();
         dto.setDate(entity.getDate());
         dto.setChargeType(entity.getChargeType());
+        dto.setStatus(entity.getStatus());
         dto.setDescription(entity.getDescription());
         dto.setAccuser(toPersonDTO(entity.getAccuser()));
         dto.setAccused(toPersonDTO(entity.getAccused()));

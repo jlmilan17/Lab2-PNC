@@ -12,6 +12,7 @@ import com.lab2.pnc.Repository.iPoliceStationRepository;
 import com.lab2.pnc.Service.iPoliceStationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,9 +23,9 @@ public class PoliceStationServiceImp implements iPoliceStationService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public List<PoliceStationDTO> findAll() {
         return policeStationRepository.findAll().stream().map(this::toDTO).toList();
-//        return List.of();
     }
 
     private AddressDTO toAddressDTO(Address address) {
@@ -67,7 +68,9 @@ public class PoliceStationServiceImp implements iPoliceStationService {
         PoliceStationDTO dto = new PoliceStationDTO();
         dto.setName(policeStation.getName());
         dto.setAddressDTO(toAddressDTO(policeStation.getAddress()));
-        dto.setDirector(toPoliceOfficerDTO(policeStation.getDirector()));
+        if (policeStation.getDirector() != null) {
+            dto.setDirector(toPoliceOfficerDTO(policeStation.getDirector()));
+        }
         return dto;
     }
 }

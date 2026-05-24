@@ -22,7 +22,8 @@ public class GlobalExceptionHandler {
             PersonNotFoundException.class,
             PoliceOfficerNotFoundException.class,
             PoliceStationNotFoundException.class,
-            DepartmentNotFoundException.class
+            DepartmentNotFoundException.class,
+            ChargeNotFoundException.class
     })
     public ResponseEntity<Map<String, Object>> handleNotFound(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body(HttpStatus.NOT_FOUND, ex.getMessage()));

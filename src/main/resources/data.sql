@@ -100,32 +100,32 @@ SET director_id = (SELECT police_officer_uuid FROM police_officer WHERE code_num
 WHERE name = 'Delegación Occidente';
 
 -- ---- Cargos ----
-INSERT INTO charges (charges_uuid, date, charge_type, description, accuser_id, accused_id, registered_by_officer_id, police_station_id)
-SELECT gen_random_uuid(), date, charge_type, description, accuser_id, accused_id, registered_by_officer_id, police_station_id FROM (
+INSERT INTO charges (charges_uuid, date, charge_type, status, description, accuser_id, accused_id, registered_by_officer_id, police_station_id)
+SELECT gen_random_uuid(), date, charge_type, status, description, accuser_id, accused_id, registered_by_officer_id, police_station_id FROM (
     VALUES
-    ('2026-03-15 10:30:00'::timestamp, 'PENAL',    'Robo agravado en vía pública',
+    ('2026-03-15 10:30:00'::timestamp, 'PENAL',    'ACTIVA',   'Robo agravado en vía pública',
         (SELECT person_uuid FROM person WHERE dui = '12345678-9' LIMIT 1),
         (SELECT person_uuid FROM person WHERE dui = '98765432-1' LIMIT 1),
         (SELECT police_officer_uuid FROM police_officer WHERE code_number = 'PNC-0001' LIMIT 1),
         (SELECT police_station_uuid FROM police_station WHERE name = 'Delegación Centro' LIMIT 1)),
-    ('2026-04-02 14:15:00'::timestamp, 'PROCESAL', 'Daños a propiedad ajena',
+    ('2026-04-02 14:15:00'::timestamp, 'PROCESAL', 'RESUELTA', 'Daños a propiedad ajena',
         (SELECT person_uuid FROM person WHERE dui = '12345678-9' LIMIT 1),
         (SELECT person_uuid FROM person WHERE dui = '55667788-2' LIMIT 1),
         (SELECT police_officer_uuid FROM police_officer WHERE code_number = 'PNC-0002' LIMIT 1),
         (SELECT police_station_uuid FROM police_station WHERE name = 'Delegación Centro' LIMIT 1)),
-    ('2026-04-20 09:45:00'::timestamp, 'PENAL',    'Lesiones graves',
+    ('2026-04-20 09:45:00'::timestamp, 'PENAL',    'ACTIVA',   'Lesiones graves',
         (SELECT person_uuid FROM person WHERE dui = '22446688-4' LIMIT 1),
         (SELECT person_uuid FROM person WHERE dui = '98765432-1' LIMIT 1),
         (SELECT police_officer_uuid FROM police_officer WHERE code_number = 'PNC-0003' LIMIT 1),
         (SELECT police_station_uuid FROM police_station WHERE name = 'Delegación Occidente' LIMIT 1)),
-    ('2026-05-01 16:00:00'::timestamp, 'PENAL',    'Amenazas con arma',
+    ('2026-05-01 16:00:00'::timestamp, 'PENAL',    'ARCHIVADA','Amenazas con arma',
         (SELECT person_uuid FROM person WHERE dui = '33557799-5' LIMIT 1),
         (SELECT person_uuid FROM person WHERE dui = '98765432-1' LIMIT 1),
         (SELECT police_officer_uuid FROM police_officer WHERE code_number = 'PNC-0004' LIMIT 1),
         (SELECT police_station_uuid FROM police_station WHERE name = 'Delegación Occidente' LIMIT 1)),
-    ('2026-05-10 11:20:00'::timestamp, 'PROCESAL', 'Incumplimiento de contrato',
+    ('2026-05-10 11:20:00'::timestamp, 'PROCESAL', 'ACTIVA',   'Incumplimiento de contrato',
         (SELECT person_uuid FROM person WHERE dui = '11335577-3' LIMIT 1),
         (SELECT person_uuid FROM person WHERE dui = '55667788-2' LIMIT 1),
         (SELECT police_officer_uuid FROM police_officer WHERE code_number = 'PNC-0001' LIMIT 1),
         (SELECT police_station_uuid FROM police_station WHERE name = 'Delegación Centro' LIMIT 1))
-) AS t(date, charge_type, description, accuser_id, accused_id, registered_by_officer_id, police_station_id);
+) AS t(date, charge_type, status, description, accuser_id, accused_id, registered_by_officer_id, police_station_id);
