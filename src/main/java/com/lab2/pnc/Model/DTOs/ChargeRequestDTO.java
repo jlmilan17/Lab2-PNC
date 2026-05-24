@@ -38,6 +38,6 @@ public class ChargeRequestDTO {
     private String policeStationName;
 
     @NotBlank(message = "La descripción es obligatoria")
-    @Size(max = 255, message = "La descripción no puede tener más de 255 caracteres")
+    @Size(max = 1000, message = "La descripción no puede tener más de 1000 caracteres")
     private String description;
 }

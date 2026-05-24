@@ -1,5 +1,6 @@
 package com.lab2.pnc.Model;
 
+import com.lab2.pnc.Model.Enum.ChargeStatus;
 import com.lab2.pnc.Model.Enum.ChargeType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,10 @@ public class Charges {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ChargeType chargeType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ChargeStatus status;
 
     @ManyToOne
     @JoinColumn(name = "accuser_id", nullable = false)

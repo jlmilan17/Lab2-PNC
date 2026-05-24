@@ -17,6 +17,7 @@ import com.lab2.pnc.Model.DTOs.PersonDTO;
 import com.lab2.pnc.Model.DTOs.PersonSummaryDTO;
 import com.lab2.pnc.Model.DTOs.PoliceOfficerDTO;
 import com.lab2.pnc.Model.DTOs.PoliceStationDTO;
+import com.lab2.pnc.Model.Enum.ChargeStatus;
 import com.lab2.pnc.Model.Person;
 import com.lab2.pnc.Model.PoliceOfficer;
 import com.lab2.pnc.Model.PoliceStation;
@@ -62,6 +63,7 @@ public class ChargesServiceImp implements iChargesService {
         Charges charge = Charges.builder()
                 .date(request.getDate())
                 .chargeType(request.getChargeType())
+                .status(ChargeStatus.ACTIVA)
                 .accuser(accuser)
                 .accused(accused)
                 .registeredBy(officer)
@@ -125,7 +127,7 @@ public class ChargesServiceImp implements iChargesService {
         Charges charge = chargesRepository.findById(id)
                 .orElseThrow(() -> new ChargeNotFoundException(id));
 
-        charge.setChargeType(dto.getChargeType());
+        charge.setStatus(dto.getStatus());
         return toChargesDTO(chargesRepository.save(charge));
     }
 
@@ -137,6 +139,7 @@ public class ChargesServiceImp implements iChargesService {
         ChargeSummaryDTO dto = new ChargeSummaryDTO();
         dto.setId(charge.getChargesUuid());
         dto.setChargeType(charge.getChargeType());
+        dto.setStatus(charge.getStatus());
         dto.setAccuser(accuser);
         dto.setOfficerName(charge.getRegisteredBy().getPerson().getName());
         return dto;
@@ -146,6 +149,7 @@ public class ChargesServiceImp implements iChargesService {
         ChargesDTO dto = new ChargesDTO();
         dto.setDate(entity.getDate());
         dto.setChargeType(entity.getChargeType());
+        dto.setStatus(entity.getStatus());
         dto.setDescription(entity.getDescription());
         dto.setAccuser(toPersonDTO(entity.getAccuser()));
         dto.setAccused(toPersonDTO(entity.getAccused()));
